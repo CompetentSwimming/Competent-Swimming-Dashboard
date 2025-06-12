@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competent Swimming - Course Registration</title>
+
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <!-- Init Supabase Client (auth support for user_id injection) -->
+  <script>
+    const supabase = supabase.createClient(
+      'https://urcbopwzzvtclupleizu.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyY2JvcHd6enZ0Y2x1cGxlaXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU3NjI2MTAsImV4cCI6MjA2MTMzODYxMH0.dP2QiSyJtd8jkSAmVdbm_rIDblYR2M-0Gn-7JY71Heg'
+    );
+  </script>
+
+  <!-- Stripe.js (stable v3) -->
+  <script defer src="https://js.stripe.com/v3/"></script>
+
+  <!-- Stripe Elements integration script (your custom logic) -->
+  <script
+    defer
+    src="https://www.competentswimming.co.uk/wp-content/themes/twentytwentyfour-child/assets/js/join-competent-swimming-(booking)/account-creation/stripe-elements.js"
+  ></script>
+</head>
+<body>
+  <div class="msc-grid-layout">
+    <!-- Left Column - Static Information -->
+    <div class="msc-sidebar custom-scrollbar">
+      <div class="msc-sidebar-header">
+        <div class="msc-logo-wrapper">
+          <img class="msc-logo-img" src="https://www.competentswimming.co.uk/wp-content/themes/twentytwentyfour-child/assets/images/competent-swimming-logos/Competent%20Swimmer%20white.png" alt="">
+        </div>
+      </div>
+    
+      <div class="msc-highlight-card">
+        <h2 class="msc-highlight-title">
+          <span class="msc-highlight-icon-wrapper">
+            <svg class="msc-highlight-icon" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+            </svg>
+          </span>
+          SWIM EVERY WEEK AND ATTAIN...
+        </h2>
+    
+        <ul class="msc-feature-list">
+          <li class="msc-feature-item">
+            <span class="msc-feature-icon-bg">
+              <svg class="msc-feature-icon" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 
+                     011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
+              </svg>
+            </span>
+            <span class="msc-feature-text">LESSONS EVERY WEEK</span>
+          </li>
+          <li class="msc-feature-item">
+            <span class="msc-feature-icon-bg">
+              <svg class="msc-feature-icon" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 
+                     011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
+              </svg>
+            </span>
+            <span class="msc-feature-text">LIFE SAVING SKILLS</span>
+          </li>
+          <li class="msc-feature-item">
+            <span class="msc-feature-icon-bg">
+              <svg class="msc-feature-icon" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 
+                     011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
+              </svg>
+            </span>
+            <span class="msc-feature-text">AN EASY TO LEARN ENVIRONMENT</span>
+          </li>
+          <li class="msc-feature-item">
+            <span class="msc-feature-icon-bg">
+              <svg class="msc-feature-icon" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 
+                     011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
+              </svg>
+            </span>
+            <span class="msc-feature-text">SEA-CAPABLE SWIMMING</span>
+          </li>
+          <li class="msc-feature-item">
+            <span class="msc-feature-icon-bg">
+              <svg class="msc-feature-icon" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 
+                     011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
+              </svg>
+            </span>
+            <span class="msc-feature-text">WATER CONFIDENCE</span>
+          </li>
+        </ul>
+    
+        <p class="msc-highlight-desc">
+          Learn to swim within weeks and be able to go into water anywhere.
+        </p>
+      </div>
+    </div>
+
+    <!-- Right Column - Scrollable Form -->
+    <div class="bhd-teal-section custom-scrollbar">
+      <div class="bhd-content-wrapper">
+        <div class="msc-join-section">
+          <div class="msc-logo-container">
+            <img src="https://www.competentswimming.co.uk/wp-content/themes/twentytwentyfour-child/assets/images/competent-swimming-logos/Competent%20Swimmer%20white.png" alt="Competent Swimming Logo" class="msc-logo-img">
+          </div>
+          <h2 class="msc-join-title">JOIN COMPETENT SWIMMING</h2>
+          <p class="msc-join-subtitle">LEARN TO SWIM AT AN ACCELERATED RATE</p>
+        </div>
+
+        <form
+          id="booking-form"
+          autocomplete="on"
+          action="/wp-admin/admin-post.php?action=cs_handle_booking"
+          method="POST"
+          class="bhd-form-stack"
+          novalidate
+        >
+        [cs_booking_nonce]
+
+          <!-- Personal Information Section -->
+          <div class="bhd-personal-info">
+            <div class="bhd-info-header">
+              <div class="bhd-icon-container">
+                <svg class="bhd-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 
+                       011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
+                </svg>
+              </div>
+              <h3 class="bhd-section-title">PERSONAL INFORMATION</h3>
+            </div>
+          
+            <div class="bhd-input-grid">
+              <div class="bhd-form-group">
+                <label for="firstName" class="bhd-label">First Name</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  id="firstName"
+                  placeholder="First Name"
+                  required
+                  class="bhd-input"
+                >
+                <span class="error-message">First name is required</span>
+              </div>
+              <div class="bhd-form-group">
+                <label for="lastName" class="bhd-label">Last Name</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  id="lastName"
+                  placeholder="Last Name"
+                  required
+                  class="bhd-input"
+                >
+                <span class="error-message">Last name is required</span>
+              </div>
+            </div>
+          
+            <div class="bhd-input-group">
+              <div class="bhd-form-group">
+                <label for="email" class="bhd-label">Email Address</label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="Email Address"
+                  required
+                  class="bhd-input"
+                >
+                <span class="error-message">Please enter a valid email address</span>
+              </div>
+              <div class="bhd-form-group">
+                <label for="phone" class="bhd-label">Phone Number</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  id="phone"
+                  placeholder="Phone Number"
+                  pattern="[0-9]{10,}"
+                  required
+                  class="bhd-input"
+                >
+                <span class="error-message">Please enter a valid phone number</span>
+              </div>
+            </div>
+          </div>
+
+            <div class="bhd-input-grid">
+              <div class="bhd-form-group">
+                <label for="swimmerFirstName" class="bhd-label">Swimmer First Name</label>
+                <input
+                  type="text"
+                  name="swimmerFirstName"
+                  id="swimmerFirstName"
+                  placeholder="Swimmer First Name"
+                  required
+                  class="bhd-input"
+                >
+                <span class="error-message">Swimmer first name is required</span>
+              </div>
+              <div class="bhd-form-group">
+                <label for="swimmerLastName" class="bhd-label">Swimmer Last Name</label>
+                <input
+                  type="text"
+                  name="swimmerLastName"
+                  id="swimmerLastName"
+                  placeholder="Swimmer Last Name"
+                  required
+                  class="bhd-input"
+                >
+                <span class="error-message">Swimmer last name is required</span>
+              </div>
+            </div>
+
+            <div class="bhd-input-grid">
+              <div class="bhd-form-group">
+                <label for="swimmerAge" class="bhd-label">Swimmer Age</label>
+                <input
+                  type="number"
+                  name="swimmerAge"
+                  id="swimmerAge"
+                  placeholder="Age"
+                  min="4"
+                  max="120"
+                  required
+                  class="bhd-input"
+                >
+                <span class="error-message">Please enter a valid age</span>
+              </div>
+              <div class="bhd-form-group">
+                <label for="swimmerAbility" class="bhd-label">Swimmer Ability</label>
+                <input
+                  type="text"
+                  name="swimmerAbility"
+                  id="swimmerAbility"
+                  placeholder="Beginner / Intermediate / Advanced"
+                  required
+                  class="bhd-input"
+                >
+                <span class="error-message">Please describe swimmer ability</span>
+              </div>
+            </div>
+
+
+
+          <!-- Course Selection Section -->
+          <div class="bhd-plans-section">
+
+            <div class="bhd-plan-header">
+              <div class="bhd-icon-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" class="bhd-icon-svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0
+                           011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                </svg>
+              </div>
+              <h3 class="bhd-plan-title">SELECT LESSON TYPE</h3>
+            </div>
+
+            <!-- ✅ NEW clean container for lesson types -->
+            <div class="lesson-type-container" style="display: flex; gap: 10px;">
+              <!-- Private Lessons -->
+              <div class="bhd-option-wrapper" style="flex: 1; margin-right: 5px;">
+                <label class="plan-option-label">
+                  <div class="bhd-option-inner">
+                    <input type="radio" name="lesson_type" value="private" class="lesson-radio" required>
+                    <div class="bhd-option-content">
+                      <div class="bhd-option-header">
+                        <span class="bhd-option-name">1-1 Private Lessons</span>
+                      </div>
+                      <p class="bhd-option-desc">Personalised 1-1 instruction for all ages</p>
+                    </div>
+                  </div>
+                </label>
+              </div>
+
+              <!-- Group Lessons -->
+              <div class="bhd-option-wrapper" style="flex: 1; margin-left: 5px;">
+                <label class="plan-option-label">
+                  <div class="bhd-option-inner">
+                    <input type="radio" name="lesson_type" value="group" class="lesson-radio">
+                    <div class="bhd-option-content">
+                      <div class="bhd-option-header">
+                        <span class="bhd-option-name">Group Lessons</span>
+                      </div>
+                      <p class="bhd-option-desc">Fun, interactive learning for children</p>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Hidden input and validation error -->
+            <span class="error-message" id="lesson-type-error" style="display:none;">Group lessons are only for children under 18</span>
+            <input type="hidden" name="lesson-category" id="lessonCategory">
+
+
+
+            <div class="bhd-plan-header">
+              <div class="bhd-icon-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" class="bhd-icon-svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0
+                           011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                </svg>
+              </div>
+              <h3 class="bhd-plan-title">SELECT PLAN</h3>
+            </div>
+          
+            <div class="bhd-plan-options">
+
+              <!-- Test Plan -->
+              <div class="plan-container">
+                <label class="plan-option-label">
+                  <div class="bhd-option-inner">
+                    <input type="radio" name="payment-plan" value="price_1RYYTR1VlpCPYqMRSJJhIwPI" class="plan-radio" data-plan-name="Test Plan">
+                    <div class="bhd-option-content">
+                      <div class="bhd-option-header">
+                        <span class="bhd-option-name">Test Plan</span>
+                        <span class="bhd-option-price">£1.00</span>
+                      </div>
+                      <p class="bhd-option-desc">8 sessions – Test plan for integration</p>
+                    </div>
+                  </div>
+                </label>
+                <div class="plan-details">
+                  <h4 class="bhd-details-title">Test Plan Details</h4>
+                  <ul class="bhd-detail-list">
+                    <li class="bhd-detail-item">
+                      <svg class="bhd-detail-icon" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0
+                                 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0
+                                 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                      </svg>
+                      <span>Use this option to test your payment flow</span>
+                    </li>
+                    <!-- repeat for other detail items -->
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Starter Plan -->
+              <div class="plan-container">
+                <label class="plan-option-label">
+                  <div class="bhd-option-inner">
+                    <input type="radio" name="payment-plan" value="price_1RIxdz1VlpCPYqMR5vDQEyQ9" class="plan-radio" data-plan-name="Starter" required>
+                    <div class="bhd-option-content">
+                      <div class="bhd-option-header">
+                        <span class="bhd-option-name">Starter</span>
+                        <span class="bhd-option-price">£215.99</span>
+                      </div>
+                      <p class="bhd-option-desc">8 sessions – Perfect for first-time swimmers</p>
+                    </div>
+                  </div>
+                </label>
+                <div class="plan-details">
+                  <h4 class="bhd-details-title">Starter Plan Details</h4>
+                  <ul class="bhd-detail-list">
+                    <li class="bhd-detail-item">
+                      <svg class="bhd-detail-icon" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0
+                                 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0
+                                 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                      </svg>
+                      <span>Introduction to water safety and basic swimming techniques</span>
+                    </li>
+                    <!-- repeat for other detail items -->
+                  </ul>
+                  <div class="bhd-badge-container">
+                    <span class="bhd-badge">Most Popular</span>
+                  </div>
+                </div>
+              </div>
+          
+              <!-- Tidebreaker Plan -->
+              <div class="plan-container">
+                <label class="plan-option-label">
+                  <div class="bhd-option-inner">
+                    <input type="radio" name="payment-plan" value="price_1RIxh71VlpCPYqMRJSG59YVs" class="plan-radio" data-plan-name="Tidebreaker">
+                    <div class="bhd-option-content">
+                      <div class="bhd-option-header">
+                        <span class="bhd-option-name">Tidebreaker</span>
+                        <span class="bhd-option-price">£388.99</span>
+                      </div>
+                      <p class="bhd-option-desc">8 sessions – For those with basic swimming skills</p>
+                    </div>
+                  </div>
+                </label>
+                <div class="plan-details">
+                  <h4 class="bhd-details-title">Tidebreaker Plan Details</h4>
+                  <ul class="bhd-detail-list">
+                    <li class="bhd-detail-item">
+                      <svg class="bhd-detail-icon" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0
+                                 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0
+                                 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                      </svg>
+                      <span>Refinement of freestyle, backstroke, and breaststroke</span>
+                    </li>
+                    <!-- ... -->
+                  </ul>
+                  <div class="bhd-badge-container">
+                    <span class="bhd-badge">Best Value</span>
+                  </div>
+                </div>
+              </div>
+          
+              <!-- Hydromaster Plan -->
+              <div class="plan-container">
+                <label class="plan-option-label">
+                  <div class="bhd-option-inner">
+                    <input type="radio" name="payment-plan" value="price_1RIxl91VlpCPYqMRuYUHuYGU" class="plan-radio" data-plan-name="Hydromaster">
+                    <div class="bhd-option-content">
+                      <div class="bhd-option-header">
+                        <span class="bhd-option-name">Hydromaster</span>
+                        <span class="bhd-option-price">£518.99</span>
+                      </div>
+                      <p class="bhd-option-desc">8 sessions – For confident swimmers looking to perfect technique</p>
+                    </div>
+                  </div>
+                </label>
+                <div class="plan-details">
+                  <h4 class="bhd-details-title">Hydromaster Plan Details</h4>
+                  <ul class="bhd-detail-list">
+                    <li class="bhd-detail-item">
+                      <svg class="bhd-detail-icon" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0
+                                 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0
+                                 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                      </svg>
+                      <span>Mastery of all four competitive strokes</span>
+                    </li>
+                    <!-- ... -->
+                  </ul>
+                  <div class="bhd-badge-container">
+                    <span class="bhd-badge">Elite Training</span>
+                  </div>
+                </div>
+              </div>
+          
+              <span class="error-message">Please select a plan</span>
+            </div>
+          </div>
+
+
+
+            <!-- Payment Information Section -->
+            <div class="bhd-payment-section">
+              <div class="bhd-payment-header">
+                <div class="bhd-icon-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" class="bhd-icon-svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0
+                           011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                </svg>
+                </div>
+                <h3 class="bhd-payment-title">PAYMENT DETAILS</h3>
+              </div>
+
+              <div class="bhd-form-fields">
+
+                <!-- Name on Card -->
+                <div class="bhd-form-group">
+                  <label for="cardName" class="bhd-label">Card Name</label>
+                  <input
+                    type="text"
+                    id="cardName"
+                    name="cardName"
+                    placeholder="John Smith"
+                    required
+                    class="bhd-input"
+                  />
+                  <span class="error-message">Please enter the name on your card</span>
+                </div>
+
+                <!-- Card Number -->
+                <div class="bhd-form-group">
+                  <label for="card-number" class="bhd-label">Card Number</label>
+                  <div id="card-number" class="bhd-input"></div>
+                </div>
+
+                <!-- Expiry Date -->
+                <div class="bhd-form-group">
+                  <label for="card-expiry" class="bhd-label">Expiry Date</label>
+                  <div id="card-expiry" class="bhd-input"></div>
+                </div>
+
+                <!-- CVC -->
+                <div class="bhd-form-group">
+                  <label for="card-cvc" class="bhd-label">CVC</label>
+                  <div id="card-cvc" class="bhd-input"></div>
+                </div>
+
+                <!-- Combined error display -->
+                <div id="card-errors" class="error-message" role="alert"></div>
+
+              </div>
+            </div>
+
+          
+
+
+          <!-- Billing Address Section -->
+          <div class="bhd-billing-section">
+            <div class="bhd-billing-header">
+              <div class="bhd-icon-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" class="bhd-payment-icon" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 
+                           01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 
+                           1 0 011.414 0z"/>
+                </svg>
+              </div>
+              <h3 class="bhd-billing-title">BILLING ADDRESS</h3>
+            </div>
+          
+            <div class="bhd-form-fields">
+              <div class="bhd-form-group">
+                <label for="address" class="bhd-label">Address</label>
+                <input
+                  type="text"
+                  name="address"
+                  id="address"
+                  placeholder="123 London St"
+                  required
+                  class="bhd-input"
+                >
+                <span class="error-message">Please enter your address</span>
+              </div>
+          
+              <div class="bhd-address-grid">
+                <div class="bhd-form-group">
+                  <label for="city" class="bhd-label">City</label>
+                  <input
+                    type="text"
+                    name="city"
+                    id="city"
+                    placeholder="London"
+                    required
+                    class="bhd-input"
+                  >
+                  <span class="error-message">Please enter your city</span>
+                </div>
+                <div class="bhd-form-group">
+                  <label for="postCode" class="bhd-label">Post Code</label>
+                  <input
+                    type="text"
+                    name="postCode"
+                    id="postCode"
+                    placeholder="Post Code"
+                    pattern="^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?)))) ?[0-9][A-Za-z]{2})$"
+                    required
+                    class="bhd-input"
+                  >
+                  <span class="error-message">Please enter a valid post code</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Terms and Conditions -->
+          <div>
+            <label class="custom-checkbox">
+              <input type="checkbox" required>
+              <span class="checkmark"></span>
+              I agree to the terms and conditions and privacy policy
+            </label>
+            <span class="error-message">You must accept the terms and conditions</span>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="bhd-submit-button">
+            Complete Payment
+          </button>
+          
+          <p class="bhd-secure-note">
+            Your payment information is secure and encrypted
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+</body>
+</html>
